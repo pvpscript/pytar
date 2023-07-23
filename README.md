@@ -6,6 +6,8 @@ I wrote this code for a script I was writing that required raw data to be added 
 
 # Usage
 ```python
+from pytar import Tar
+
 with Tar('/home/user/filename.tar.gz') as tarball:
     tarball.add_file('hello.txt', 'Hello, World!')
     tarball.add_file('bye.txt', 'Goodbye, World!')
