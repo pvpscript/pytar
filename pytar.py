@@ -1,20 +1,32 @@
 import tarfile
 import io
+import re
 
 from datetime import datetime
 
+class TarModeError(tarfile.TarError):
+    """ Raised when given a name without a proper extension """
+
 class Tar:
+    _MODE_REGEX = '\.tar\.(gz|xz|bz2)$'
+
     def __init__(
         self,
         name: str,
-        mode: str = 'x:gz',
         encoding: str = 'utf-8',
         compresslevel: int = 9,
     ):
         self._name = name
-        self._mode = mode
+        self._mode = self._extract_mode(name)
+
         self._encoding = encoding
         self._compresslevel = compresslevel
+
+    def _extract_mode(self, name: str) -> str:
+        if mode_match := re.findall(self._MODE_REGEX, name):
+            return f'x:{mode_match[0]}'
+
+        raise TarModeError('File name does not contain a valid tar mode')
 
     def _create(self):
         return tarfile.open(name=self._name,
